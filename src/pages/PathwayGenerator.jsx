@@ -26,7 +26,7 @@ export default function PathwayGenerator() {
         : [...f.interests, val]
     }))
   }
-
+}
   const generatePathway = async () => {
     setLoading(true)
     const prompt = `You are an expert education advisor for Sri Lankan students. 
