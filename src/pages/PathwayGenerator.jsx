@@ -66,31 +66,35 @@ Respond ONLY with a JSON object in this exact format, no markdown, no explanatio
   ]
 }`
 
-    try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 4000,
-          messages: [{ role: 'user', content: prompt }]
-        })
-      })
-      const data = await res.json()
-      const text = data.content[0].text
-      const clean = text.replace(/```json|```/g, '').trim()
-      setPathway(JSON.parse(clean))
-    } catch (err) {
-      console.error(err)
-      alert(err.message)
-    }
+   try {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  })
+  const data = await res.json()
+  if (data.error) {
+    alert('API Error: ' + data.error.message)
     setLoading(false)
+    return
   }
+  const text = data.content[0].text
+  const clean = text.replace(/```json|```/g, '').trim()
+  setPathway(JSON.parse(clean))
+} catch (err) {
+  console.error(err)
+  alert(err.message)
+}
+setLoading(false)
 
   return (
     <div className="min-h-screen bg-[#0B1628] text-white">
